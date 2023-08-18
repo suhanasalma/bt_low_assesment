@@ -86,7 +86,7 @@ const CsvFile = () => {
       <form className="">
         <div className="grid grid-cols-1 gap-5 justify-items-center	">
           {formInputs?.map((input, i) => (
-            <div key={i} className="grid grid-cols-2 ">
+            <div key={i} className="grid sm:grid-cols-2 grid-cols-1">
               <label className="text-slate-700">{input.label}</label>
               <input
                 type="number"

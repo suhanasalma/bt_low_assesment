@@ -196,7 +196,7 @@ const FileUpload = ({
       onDrop={handleDrop}
       className={`outline-dashed outline-2  ${
         uploadedFileName ? "outline-blue-400" : "outline-slate-400"
-      }  w-6/12 mx-auto h-32 mb-10 p-2 flex justify-center items-center ${
+      } w-11/12 sm:w-6/12 mx-auto h-32 mb-10 p-2 flex justify-center items-center ${
         isDragging ? "bg-blue-100" : ""
       }`}
     >
