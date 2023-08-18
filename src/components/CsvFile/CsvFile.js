@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import FileUpload from "./FileUpload";
+import Chart from "../Chart/Chart";
 
 const CsvFile = () => {
   const [maxX, setMaxX] = useState("");
@@ -12,6 +13,7 @@ const CsvFile = () => {
   const [disabled, setDisabled] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState("");
+  const [chartData, setChartData] = useState([]);
 
   const formInputs = [
     {
@@ -46,7 +48,6 @@ const CsvFile = () => {
     },
   ];
 
- 
   useEffect(() => {
     let details = localStorage.getItem("pdfDetails");
     if (details) {
@@ -62,11 +63,12 @@ const CsvFile = () => {
     console.log(details);
   }, [maxX, minX, maxY, minY, maxZ, minZ]);
 
+  console.log("chartData", chartData);
+
   return (
-    <div
-      className="bg-white py-6 rounded-md shadow-lg mt-5"
-    >
+    <div className="bg-white py-6 rounded-md shadow-lg mt-5">
       <FileUpload
+        setChartData={setChartData}
         setMaxX={setMaxX}
         setMinX={setMinX}
         setMaxY={setMaxY}
@@ -105,6 +107,7 @@ const CsvFile = () => {
           </Link>
         </div>
       </form>
+      {chartData?.labels?.length > 0 && <Chart chartData={chartData} />}
     </div>
   );
 };

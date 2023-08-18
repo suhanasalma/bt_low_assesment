@@ -8,38 +8,41 @@ const FileUpload = ({
   setMinY,
   setMaxZ,
   setMinZ,
-  maxX,
-  minX,
-  maxY,
-  minY,
-  maxZ,
-  minZ,
   setDisabled,
   setIsDragging,
   setUploadedFileName,
   disabled,
   isDragging,
   uploadedFileName,
+
+  setChartData,
 }) => {
   const parseCsvAndExtractValues = (content) => {
     const lines = content.split("\n"); // Split CSV content into lines
+
     const headers = lines[0]
       .split(",")
       .map((header) => header.trim().toLowerCase());
-    const columnIndices = { x: -1, y: -1, z: -1 }; // Initialize column indices
+    const columnIndices = { kp: -1, x: -1, y: -1, z: -1 }; // Initialize column indices
 
     headers.forEach((header, index) => {
-      if (header === "x" || header === "y" || header === "z") {
+      if (
+        header === "x" ||
+        header === "y" ||
+        header === "z" ||
+        header === "kp"
+      ) {
         columnIndices[header] = index;
       }
     });
     const xs = [];
     const ys = [];
     const zs = [];
+    const KPs = [];
+    const Xs = [];
 
     lines.slice(1).forEach((line) => {
       const columns = line.split(","); // Split each line into columns
-
       if (columns.length >= 4) {
         const x = parseFloat(columns[columnIndices.x].trim()); // Convert X value to float
         const y = parseFloat(columns[columnIndices.y].trim()); // Convert Y value to float
@@ -55,6 +58,18 @@ const FileUpload = ({
           zs.push(z);
         }
       }
+
+      if (columns.length >= 2) {
+        const KP = parseFloat(columns[columnIndices.kp]); // Convert KP value to float
+        const X = parseFloat(columns[columnIndices.x]); // Convert X value to float
+
+        if (!isNaN(KP)) {
+          KPs.push(KP);
+        }
+        if (!isNaN(X)) {
+          Xs.push(X);
+        }
+      }
     });
 
     return {
@@ -64,6 +79,8 @@ const FileUpload = ({
       minY: Math.min(...ys),
       maxZ: Math.max(...zs),
       minZ: Math.min(...zs),
+      KPs,
+      Xs,
     };
   };
 
@@ -73,10 +90,23 @@ const FileUpload = ({
     if (file) {
       setUploadedFileName(file.name);
       const reader = new FileReader();
-      console.log(reader);
       reader.onload = (event) => {
         const content = event.target.result;
         const extractedValues = parseCsvAndExtractValues(content);
+        const chartData = {
+          labels: extractedValues?.KPs?.map((item) => item),
+          datasets: [
+            {
+              label: "X",
+              data: extractedValues?.Xs?.map((item) => item),
+              backgroundColor: "rgba(255, 99, 132, 1)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+          ],
+        };
+
+        setChartData(chartData);
         setMaxX(extractedValues.maxX);
         setMinX(extractedValues.minX);
         setMaxY(extractedValues.maxY);
@@ -104,6 +134,34 @@ const FileUpload = ({
       reader.onload = (event) => {
         const content = event.target.result;
         const extractedValues = parseCsvAndExtractValues(content);
+        const chartData = {
+          labels: extractedValues?.KPs?.map((item) => item),
+          datasets: [
+            {
+              label: "X",
+              data: extractedValues?.Xs?.map((item) => item),
+              backgroundColor: [
+                "rgba(255, 99, 132, 0.2)",
+                "rgba(54, 162, 235, 0.2)",
+                "rgba(255, 206, 86, 0.2)",
+                "rgba(75, 192, 192, 0.2)",
+                "rgba(153, 102, 255, 0.2)",
+                "rgba(255, 159, 64, 0.2)",
+              ],
+              borderColor: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(153, 102, 255, 1)",
+                "rgba(255, 159, 64, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        };
+
+        setChartData(chartData);
         setMaxX(extractedValues.maxX);
         setMinX(extractedValues.minX);
         setMaxY(extractedValues.maxY);
